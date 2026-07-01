@@ -26,11 +26,11 @@ const userSchema = new Schema(
             index: true
         },
         avatar: {
-            type: String, // cloudinary url
+            type: String,
             required: true,
         },
         coverImage: {
-            type: String, // cloudinary url
+            type: String,
         },
         watchHistory: [
             {
@@ -45,18 +45,16 @@ const userSchema = new Schema(
         refreshToken: {
             type: String
         }
-
     },
     {
         timestamps: true
     }
 )
 
-userSchema.pre("save", async function (next) {
-    if(!this.isModified("password")) return next();
-
+// ✅ removed next - not needed with async/await in modern Mongoose
+userSchema.pre("save", async function () {
+    if(!this.isModified("password")) return;
     this.password = await bcrypt.hash(this.password, 10)
-    next()
 })
 
 userSchema.methods.isPasswordCorrect = async function(password){
@@ -77,11 +75,11 @@ userSchema.methods.generateAccessToken = function(){
         }
     )
 }
+
 userSchema.methods.generateRefreshToken = function(){
     return jwt.sign(
         {
             _id: this._id,
-            
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
