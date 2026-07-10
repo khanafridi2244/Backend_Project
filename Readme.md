@@ -1,102 +1,111 @@
-# 🎥 Video Hosting Backend API
+# Video Hosting & Social Backend
 
-A robust and scalable backend project built with **Node.js**, **Express.js**, **MongoDB**, and **Mongoose**. This project powers a video hosting platform similar to YouTube, providing all essential backend functionalities required for a modern video-sharing application.
+A complete backend for a video-hosting platform with social features — built with Node.js, Express, and MongoDB. Users can upload videos, comment, like, tweet, build playlists, subscribe to channels, and view channel analytics.
 
-# project model
-(https://app.eraser.io/workspace/KeCUWXpYEuy3c0ZhLt0H?origin=share)
+This project follows production-style patterns: centralized error handling, JWT-based auth with access/refresh tokens, file uploads via Multer + Cloudinary, and MongoDB aggregation pipelines for nested/joined data.
 
-## 🚀 Features
+## Data Model
 
-* User Authentication & Authorization
-* Secure Login and Registration
-* JWT-based Authentication
-* Access Token & Refresh Token Management
-* Password Hashing with Bcrypt
-* Video Upload and Management
-* Like & Dislike Videos
-* Comment and Reply System
-* Subscribe & Unsubscribe Channels
-* User Profile Management
-* Watch History Tracking
-* Playlist Management
-* File Upload Handling
-* RESTful API Architecture
-* Error Handling Middleware
-* Data Validation
-* Secure Routes and Protected Endpoints
+📌 **Model diagram:** [(https://app.eraser.io/workspace/KeCUWXpYEuy3c0ZhLt0H?origin=share)](https://app.eraser.io/workspace/YOUR-LINK)
 
-## 🛠️ Tech Stack
+> Replace this with your own model link (e.g. from [Eraser.io](https://eraser.io), [dbdiagram.io](https://dbdiagram.io), or a diagram you've drawn) once you have one hosted.
 
-### Backend
+## Tech Stack
 
-* Node.js
-* Express.js
+- **Runtime:** Node.js
+- **Framework:** Express.js
+- **Database:** MongoDB with Mongoose
+- **Auth:** JWT (access + refresh tokens), bcrypt for password hashing
+- **File storage:** Multer (local temp) → Cloudinary (persistent)
+- **Pagination:** mongoose-aggregate-paginate-v2
 
-### Database
+## Features
 
-* MongoDB
-* Mongoose
+- **Auth** — register, login, logout, refresh access token, change password
+- **Users** — update account details, avatar/cover image upload, channel profile, watch history
+- **Videos** — upload, publish/unpublish, update, delete, search/sort/paginate, view count tracking
+- **Comments** — add, edit, delete, paginated comments per video
+- **Likes** — toggle likes on videos, comments, and tweets
+- **Tweets** — create, edit, delete short text posts
+- **Playlists** — create, update, delete, add/remove videos
+- **Subscriptions** — subscribe/unsubscribe to channels, view subscriber and subscription lists
+- **Dashboard** — channel stats (total views, subscribers, videos, likes) and channel video list
+- **Healthcheck** — simple uptime endpoint
 
-### Authentication & Security
+## Project Structure
 
-* JSON Web Tokens (JWT)
-* Bcrypt
-
-### Other Tools & Libraries
-
-* Multer
-* Cloudinary
-* Cookie Parser
-* CORS
-* Dotenv
-* Mongoose Aggregation Pipeline
-
-## 📂 Project Structure
-
-```bash
+```
 src/
-├── controllers/
-├── models/
-├── routes/
-├── middlewares/
-├── utils/
+├── controllers/       # Route handler logic
+│   ├── comment.controller.js
+│   ├── dashboard.controller.js
+│   ├── healthcheck.controller.js
+│   ├── like.controller.js
+│   ├── playlist.controller.js
+│   ├── subscription.controller.js
+│   ├── tweet.controller.js
+│   ├── user.controller.js
+│   └── video.controller.js
 ├── db/
-├── constants/
-├── validators/
-└── app.js
+│   └── index.js        # MongoDB connection
+├── middlewares/
+│   ├── auth.middleware.js
+│   └── multer.middleware.js
+├── models/
+│   ├── comment.model.js
+│   ├── like.model.js
+│   ├── playlist.model.js
+│   ├── subscription.model.js
+│   ├── tweet.model.js
+│   ├── user.model.js
+│   └── video.model.js
+├── routes/
+│   ├── comment.routes.js
+│   ├── dashboard.routes.js
+│   ├── healthcheck.routes.js
+│   ├── like.routes.js
+│   ├── playlist.routes.js
+│   ├── subscription.routes.js
+│   ├── tweet.routes.js
+│   ├── user.routes.js
+│   └── video.routes.js
+├── utils/
+│   ├── ApiError.js
+│   ├── ApiResponse.js
+│   ├── asyncHandler.js
+│   └── cloudinary.js
+├── app.js
+├── constants.js
+└── index.js
 ```
 
-## 📦 Installation
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v18+ recommended)
+- MongoDB Atlas account (or local MongoDB instance)
+- Cloudinary account (for file storage)
+
+### Installation
 
 ```bash
-# Clone the repository
-git clone <repository-url>
-
-# Navigate to project directory
-cd project-name
-
-# Install dependencies
+git clone https://github.com/<your-username>/<your-repo-name>.git
+cd <your-repo-name>
 npm install
-
-# Create environment file
-.env
-
-# Start development server
-npm run dev
 ```
 
-## ⚙️ Environment Variables
+### Environment Variables
 
-Create a `.env` file in the root directory and add:
+Create a `.env` file in the root directory (use `.env.sample` as a reference):
 
 ```env
-PORT=8001
-
+PORT=8000
 MONGODB_URI=your_mongodb_connection_string
+CORS_ORIGIN=*
 
 ACCESS_TOKEN_SECRET=your_access_token_secret
 ACCESS_TOKEN_EXPIRY=1d
-
 REFRESH_TOKEN_SECRET=your_refresh_token_secret
 REFRESH_TOKEN_EXPIRY=10d
 
@@ -105,28 +114,32 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-## 📚 Learning Outcomes
+### Run the server
 
-This project demonstrates industry-standard backend development practices, including:
+```bash
+npm run dev
+```
 
-* Authentication & Authorization
-* Secure Password Management
-* Token-Based Security
-* REST API Development
-* Database Design & Relationships
-* Middleware Implementation
-* Error Handling
-* File Upload Management
-* Scalable Project Architecture
+Server runs at `http://localhost:8000` by default.
 
-## 🤝 Contributing
+## API Overview
 
-Contributions are welcome. Feel free to fork the repository, create a new branch, and submit a pull request.
+All routes are prefixed with `/api/v1`.
 
-## 📄 License
+| Resource | Base Route |
+|---|---|
+| Users / Auth | `/users` |
+| Videos | `/videos` |
+| Comments | `/comments` |
+| Likes | `/likes` |
+| Tweets | `/tweets` |
+| Playlists | `/playlist` |
+| Subscriptions | `/subscriptions` |
+| Dashboard | `/dashboard` |
+| Healthcheck | `/healthcheck` |
 
-This project is licensed under the MIT License.
+Most routes are protected by JWT auth (`verifyJWT` middleware) and require a valid access token, sent either as a cookie or an `Authorization: Bearer <token>` header.
 
----
+## License
 
-⭐ If you found this project helpful, consider giving it a star on GitHub!
+This project is open source and available under the [MIT License](LICENSE).
